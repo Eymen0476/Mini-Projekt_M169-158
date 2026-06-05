@@ -1,0 +1,75 @@
+# =====================================================
+# Aufgabe 2 – WordPress in der AWS-Cloud via Docker
+# Erstellt von: Eymen Sarikaya
+# Modul: 158/169 – Container / Cloud
+# =====================================================
+#
+# Starten mit:  docker compose up -d
+# Stoppen mit:  docker compose down
+# Logs:         docker compose logs -f
+# =====================================================
+
+version: "3.9"
+
+services:
+
+  # --------------------------------------------------
+  # Datenbank-Container (MySQL)
+  # WordPress benötigt eine relationale Datenbank.
+  # Wir verwenden das offizielle MySQL 8.0 Image.
+  # --------------------------------------------------
+  db:
+    image: mysql:8.0
+    container_name: es-wordpress-db
+    restart: always                     # Automatischer Neustart bei Absturz
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword # Root-Passwort (nur intern)
+      MYSQL_DATABASE: wordpress          # Datenbank, die WP nutzt
+      MYSQL_USER: wpuser                 # WP-Datenbankbenutzer
+      MYSQL_PASSWORD: wppassword         # Passwort für wpuser
+    volumes:
+      - db_data:/var/lib/mysql          # Daten persistent speichern
+    networks:
+      - wp-network                      # Im gleichen internen Netz
+
+  # --------------------------------------------------
+  # WordPress-Container
+  # Nutzt das offizielle WordPress-Image mit PHP-FPM.
+  # Verbindet sich über das interne Netz mit der DB.
+  # --------------------------------------------------
+  wordpress:
+    image: wordpress:latest
+    container_name: es-wordpress
+    restart: always
+    depends_on:
+      - db                              # DB muss zuerst starten
+    ports:
+      - "8081:80"                       # Port 8080 → Container-Port 80
+    environment:
+      WORDPRESS_DB_HOST: db:3306        # Hostname = Service-Name "db"
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppassword
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp_data:/var/www/html           # WP-Dateien persistent speichern
+      - ./logs:/var/log/apache2         # Logs lokal verfügbar machen
+    networks:
+      - wp-network
+
+# --------------------------------------------------
+# Volumes: Persistente Datenspeicherung
+# Bleiben auch nach "docker compose down" erhalten.
+# Mit "docker compose down -v" werden sie gelöscht.
+# --------------------------------------------------
+volumes:
+  db_data:    # MySQL-Datenbankdaten
+  wp_data:    # WordPress-Dateien (Themes, Plugins, Uploads)
+
+# --------------------------------------------------
+# Netzwerk: Internes Bridge-Netzwerk
+# WordPress und MySQL kommunizieren intern.
+# Von aussen ist nur Port 8080 erreichbar.
+# --------------------------------------------------
+networks:
+  wp-network:
+    driver: bridge
