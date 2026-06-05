@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eymen Sarikaya – Mini-Projekt</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Microsoft-inspirierte Farbpalette */
+      --bg: #ffffff;
+      --surface: #f3f2f1;
+      --accent: #0067b8;  /* Microsoft Blau */
+      --accent2: #0078d4; /* Helles Microsoft Blau */
+      --text: #242424;
+      --muted: #616161;
+      --border: #e1dfdd;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Dezenter, heller Grid-Hintergrund */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.5;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+
+    /* Hero */
+    .hero {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      margin-bottom: 80px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .initials-badge {
+      flex-shrink: 0;
+      width: 280px;
+      height: 200px;
+      border: 2px solid var(--accent);
+      background-color: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--accent);
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Schlichter, moderner Schatten */
+    }
+
+    .initials-badge::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border: 1px solid rgba(0, 103, 184, 0.2);
+    }
+
+    .hero-text h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .hero-text p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.8;
+      max-width: 500px;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #e6f2fb; /* Sehr helles Blau */
+      color: var(--accent);
+      border: 1px solid #cce4f7;
+      padding: 4px 12px;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      font-weight: bold;
+    }
+
+    /* Cards */
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 60px;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 28px;
+      position: relative;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    .card-icon {
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+
+    .card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .card p {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      animation: fadeUp 0.8s 0.6s ease both;
+    }
+
+    footer p {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    footer .badge {
+      font-size: 0.7rem;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      letter-spacing: 0.05em;
+      background: var(--surface);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="hero">
+      <div class="initials-badge">Eymen Sarikaya</div>
+      <div class="hero-text">
+        <!-- Modulnummer aktualisiert -->
+        <div class="tag">Modul 169 / 158 – Container &amp; Cloud</div>
+        <h1>Mini-Projekt<br/>Webserver</h1>
+        <p>Deployment eines NGINX-Webservers via Docker in der AWS Cloud. Erstellt von <strong style="color:var(--accent)">Eymen Sarikaya</strong> im Rahmen des Moduls Vertiefung Container / Cloud.</p>
+      </div>
+    </div>
+
+    <p class="section-title">Technologie-Stack</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🐳</div>
+        <h3>Docker / NGINX</h3>
+        <p>Eigenes Docker-Image basierend auf NGINX:alpine. Webseite wird auf Port 8080 bereitgestellt.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">☁️</div>
+        <h3>AWS Cloud</h3>
+        <p>Container läuft in der AWS-Umgebung. Erreichbar über öffentliche IP / DNS-Adresse des Hosts.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📁</div>
+        <h3>Lokale Volumes</h3>
+        <p>HTML/CSS-Dateien und Logdaten befinden sich in lokalen Verzeichnissen und werden via Volume gemountet.</p>
+      </div>
+    </div>
+
+    <footer>
+      <!-- Modulnummer im Footer aktualisiert -->
+      <p>Erstellt von <strong style="color:var(--text)">Eymen Sarikaya</strong> &nbsp;·&nbsp; Modul 169 / 158 &nbsp;·&nbsp; AWS Container Deployment</p>
+    </footer>
+
+  </div>
+</body>
+</html>
